@@ -1,5 +1,7 @@
 # Attacks Project !
 
+In this project We'll work as a group of 2. The group will be Yassem Mohareb and Fayçal Bloul.
+
 ## This is a Python project where we are testing DOS attacks.
 
 Create a Python project in which you simulate and detect DOS attacks. The detected attacks must be
