@@ -30,7 +30,7 @@ def ddos(target_ip, attack_type):
         sys.exit(0)
 
 # Variables
-target_ip = "163.173.228.225"
+target_ip = "88.125.167.199"
 attack_type = 'syn_ack'  # syn_flood, pod, syn_ack, smurf
 
 try:

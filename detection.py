@@ -1,23 +1,29 @@
 import csv
 import time
+from scapy.all import sniff, IP  # Importation de IP pour les paquets réseau
 from SniffnDetect.sniffndetect import SniffnDetect
 
-def detect_attacks(interface):
-    detector = SniffnDetect(interface)
-    
-    # Ouvrir le fichier CSV pour enregistrer les attaques détectées
-    with open('detected_attacks.csv', 'a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Time", "Source IP", "Attack Type"])
-        
-        for packet in detector.sniff_packets():
-            attack_type = detector.detect_attack(packet)
+def detect_attacks():
+    # Initialiser l'objet SniffnDetect
+    detector = SniffnDetect()
+
+    # Fonction de callback pour traiter chaque paquet capturé
+    def process_packet(packet):
+        try:
+            # Utiliser la méthode analyze_packet pour analyser le paquet
+            detector.analyze_packet(packet)
+            attack_type = detector.RECENT_ACTIVITIES[-1][-1]  # Récupérer le type d'attaque
             if attack_type:
-                # Enregistre l'attaque détectée avec l'IP source et le type d'attaque
-                writer.writerow([time.time(), packet[0].src, attack_type])
-                print(f"Attack detected from {packet[0].src}: {attack_type}")
+                # Enregistrer l'attaque détectée
+                with open('detected_attacks.csv', 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([time.time(), packet[IP].src, attack_type])  # Utiliser IP pour l'adresse source
+                    print(f"Attack detected from {packet[IP].src}: {attack_type}")
+        except Exception as e:
+            print(f"Erreur lors du traitement du paquet : {e}")
+
+    # Utiliser Scapy pour capturer les paquets en temps réel
+    sniff(prn=process_packet)
 
 if __name__ == "__main__":
-    # Indiquer l'interface réseau sur laquelle surveiller (ex: "eth0", "wlan0")
-    interface = "eth0"
-    detect_attacks(interface)
+    detect_attacks()
